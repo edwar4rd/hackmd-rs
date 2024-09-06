@@ -6,16 +6,17 @@ use crate::error::{Error, Result};
 const HACKMD_API_BASE_URL: &str = "https://api.hackmd.io/v1";
 
 pub struct Context {
-    pub(crate) bearer: String,
+    pub(crate) token: String,
     pub(crate) client: Client,
 }
 
 impl Context {
+    /// Token is usually a alphanumberic string, like `5L3NBH6065203RT26UM8SCCCHJ5IHD15EXKDAMQKXOONLKH6D8`
     pub fn new(token: &str) -> Context {
-        let bearer = Self::make_bearer(token);
-        let client = reqwest::Client::new();
-
-        Context { bearer, client }
+        Context {
+            token: token.to_string(),
+            client: reqwest::Client::new(),
+        }
     }
 
     pub(crate) async fn get<T>(&self, path: &str) -> Result<T>
@@ -24,7 +25,7 @@ impl Context {
     {
         self.client
             .get(Context::make_url(path))
-            .header("Authorization", &self.bearer)
+            .bearer_auth(&self.token)
             .send()
             .await?
             .json()
@@ -38,16 +39,12 @@ impl Context {
     {
         self.client
             .patch(Context::make_url(path))
-            .header("Authorization", &self.bearer)
+            .bearer_auth(&self.token)
             .json(payload)
             .send()
             .await
             .map(drop)
             .map_err(Error::from)
-    }
-
-    fn make_bearer(token: &str) -> String {
-        format!("Bearer {token}")
     }
 
     pub(crate) fn make_url(route: &str) -> String {

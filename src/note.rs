@@ -47,15 +47,7 @@ pub struct Notes {
 
 impl Notes {
     pub async fn all(context: &Context) -> Result<Notes> {
-        context
-            .client
-            .get(Context::make_url("notes"))
-            .header("Authorization", &context.bearer)
-            .send()
-            .await?
-            .json()
-            .await
-            .map_err(Error::from)
+        context.get("notes").await
     }
 }
 
