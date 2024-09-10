@@ -1,5 +1,5 @@
 use reqwest::Client;
-use serde::{de::DeserializeOwned, Serialize};
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
 use crate::error::{Error, Result};
 
@@ -33,6 +33,16 @@ impl Context {
             .map_err(Error::from)
     }
 
+    pub(crate) async fn delete(&self, path: &str) -> Result<()> {
+        self.client
+            .delete(Context::make_url(path))
+            .bearer_auth(&self.token)
+            .send()
+            .await
+            .map(drop)
+            .map_err(Error::from)
+    }
+
     pub(crate) async fn patch<T>(&self, path: &str, payload: &T) -> Result<()>
     where
         T: Serialize,
@@ -44,6 +54,22 @@ impl Context {
             .send()
             .await
             .map(drop)
+            .map_err(Error::from)
+    }
+
+    pub(crate) async fn post<T1, T2>(&self, path: &str, payload: &T1) -> Result<T2>
+    where
+        T1: Serialize,
+        T2: DeserializeOwned,
+    {
+        self.client
+            .post(Context::make_url(path))
+            .bearer_auth(&self.token)
+            .json(payload)
+            .send()
+            .await?
+            .json()
+            .await
             .map_err(Error::from)
     }
 
