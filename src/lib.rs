@@ -1,6 +1,7 @@
 pub mod context;
 pub mod error;
 pub mod note;
+pub mod permisson;
 pub mod team;
 pub mod user;
 
