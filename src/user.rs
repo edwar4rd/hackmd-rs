@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::{context::Context, error::Result, team::Team};
+use crate::{context::Context, error::Result, note::SimplifiedNote, team::Team};
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -17,6 +17,10 @@ pub struct User {
 impl User {
     pub async fn me(context: &Context) -> Result<User> {
         context.get("me").await
+    }
+
+    pub async fn get_history(context: &Context) -> Result<Vec<SimplifiedNote>> {
+        context.get("history").await
     }
 }
 
