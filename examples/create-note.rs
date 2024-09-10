@@ -1,6 +1,6 @@
 use hackmd_rs::{
     context::Context,
-    note::{Note, NoteCreate, NoteUpdate, SimplifiedNote},
+    note::{Note, NoteCreate, NoteUpdate},
     permisson::{CommentPermisson, RWPermission},
 };
 use std::time::SystemTime;
