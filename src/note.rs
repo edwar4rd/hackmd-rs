@@ -67,8 +67,12 @@ pub struct SimplifiedNote {
 }
 
 impl SimplifiedNote {
-    pub async fn get_all(context: &Context) -> Result<Vec<SimplifiedNote>> {
+    pub async fn get_all_user(context: &Context) -> Result<Vec<SimplifiedNote>> {
         context.get("notes").await
+    }
+
+    pub async fn get_all_team(context: &Context, team_path: &str) -> Result<Vec<SimplifiedNote>> {
+        context.get(&format!("teams/{team_path}/notes")).await
     }
 
     pub async fn get_complete(&self, context: &Context) -> Result<Note> {
@@ -76,7 +80,7 @@ impl SimplifiedNote {
     }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct NoteCreate {
     /// seemed to be unused by hackmd api by now
@@ -95,6 +99,14 @@ impl NoteCreate {
         }
 
         context.post("notes", &self).await
+    }
+
+    pub async fn execute_in_team(mut self, context: &Context, team_path: &str) -> Result<Note> {
+        if self.read_permission > self.write_permission {
+            self.write_permission = self.read_permission;
+        }
+
+        context.post(&format!("teams/{}/notes", team_path), &self).await
     }
 }
 
