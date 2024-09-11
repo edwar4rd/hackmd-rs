@@ -1,18 +1,31 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use crate::{context::Context, error::Result};
+
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Team {
-    id: Uuid,
-    owner_id: Uuid,
-    path: String,
-    name: String,
-    logo: String,
-    description: String,
-    // TODO: this should be an enum, but this is poorly documented :'(
-    // https://hackmd.io/@hackmd-api/developer-portal/https%3A%2F%2Fhackmd.io%2F%40hackmd-api%2Fuser-notes-api#Create-a-note
-    visibility: String,
+    pub id: Uuid,
+    pub owner_id: Uuid,
+    pub path: String,
+    pub name: String,
+    pub logo: String,
+    pub description: String,
+    pub visibility: TeamVisibility,
     // TODO: we should use chrono here
-    created_at: String,
+    pub created_at: usize,
+}
+
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum TeamVisibility {
+    Public,
+    Private,
+}
+
+impl Team {
+    pub async fn mine(context: &Context) -> Result<Vec<Team>> {
+        context.get("teams").await
+    }
 }
