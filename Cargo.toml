@@ -22,6 +22,10 @@ path = "examples/get-notes.rs"
 name = "create-note"
 path = "examples/create-note.rs"
 
+[[example]]
+name = "get-teams"
+path = "examples/get-teams.rs"
+
 [dependencies]
 reqwest = { version = "0.11", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }

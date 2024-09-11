@@ -16,7 +16,7 @@ async fn main() {
 
     println!("");
 
-    println!("Latest read notes:\n");
+    println!("Latest read notes:");
     for note in latest {
         println!("\t{} ({})", note.title, note.publish_link);
     }
