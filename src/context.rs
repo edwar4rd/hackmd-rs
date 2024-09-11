@@ -28,6 +28,7 @@ impl Context {
             .bearer_auth(&self.token)
             .send()
             .await?
+            .error_for_status()?
             .json()
             .await
             .map_err(Error::from)
@@ -39,6 +40,7 @@ impl Context {
             .bearer_auth(&self.token)
             .send()
             .await
+            .and_then(|res| res.error_for_status())
             .map(drop)
             .map_err(Error::from)
     }
@@ -53,6 +55,7 @@ impl Context {
             .json(payload)
             .send()
             .await
+            .and_then(|res| res.error_for_status())
             .map(drop)
             .map_err(Error::from)
     }
@@ -68,6 +71,7 @@ impl Context {
             .json(payload)
             .send()
             .await?
+            .error_for_status()?
             .json()
             .await
             .map_err(Error::from)
